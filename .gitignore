@@ -1,0 +1,27 @@
+# Dependency directories
+node_modules/
+client/node_modules/
+
+# Environment variables — never commit these
+.env
+server/.env
+client/.env
+client/.env.local
+
+# Production build
+client/dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# MongoDB dumps
+dump/
