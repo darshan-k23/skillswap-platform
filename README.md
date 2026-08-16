@@ -258,9 +258,3 @@ npm run dev
 - [ ] Figma prototype (Assignment)
 - [ ] Deploy: Render (backend) + Vercel (frontend)
 
----
-
-## Author
-
-**VESIT Student** — Full Stack Web Development Lab, Miniproject 
-Academic Year: 2025-26
