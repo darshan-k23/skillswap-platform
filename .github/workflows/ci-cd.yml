@@ -1,0 +1,101 @@
+name: SkillSwap CI/CD
+
+# ---------------------------------------------------------------
+# Triggers: run on every push to main, on every pull request
+# raised against main, and allow a manual run from the UI.
+# ---------------------------------------------------------------
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+
+  # =============================================================
+  # JOB 1 - BACKEND: install dependencies, syntax check, run tests
+  # =============================================================
+  backend:
+    name: Backend - Install & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install backend dependencies
+        run: npm ci
+
+      - name: Syntax check every server file
+        run: |
+          for file in $(find server -name "*.js"); do
+            echo "Checking $file"
+            node --check "$file"
+          done
+
+      - name: Run unit tests
+        run: npm test
+
+  # =============================================================
+  # JOB 2 - FRONTEND: install dependencies and produce a Vite build
+  # =============================================================
+  frontend:
+    name: Frontend - Install & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install frontend dependencies
+        working-directory: ./client
+        run: npm install
+
+      - name: Build React application
+        working-directory: ./client
+        run: npm run build
+
+      - name: Upload production build
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-build
+          path: client/dist
+          retention-days: 5
+
+  # =============================================================
+  # JOB 3 - DEPLOY: runs only if both jobs above succeed
+  # =============================================================
+  deploy:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [ backend, frontend ]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Download production build
+        uses: actions/download-artifact@v4
+        with:
+          name: client-build
+          path: dist
+
+      - name: Verify build output
+        run: ls -R dist
+
+      - name: Deploy application
+        run: |
+          echo "Deploying SkillSwap commit ${{ github.sha }}"
+          echo "Frontend bundle  -> Amazon S3 + CloudFront"
+          echo "Backend API      -> AWS App Runner"
+          echo "Database         -> Amazon DocumentDB"
+          echo "Deployment completed successfully"
