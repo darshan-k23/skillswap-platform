@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import Avatar from './Avatar'
 
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth()
@@ -57,12 +58,7 @@ const Navbar = () => {
                   className="flex items-center gap-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 transition-all duration-200"
                 >
                   {/* Avatar */}
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary-400 to-accent-500 flex items-center justify-center text-white text-xs font-bold">
-                    {user?.avatar
-                      ? <img src={user.avatar} alt={user.name} className="w-7 h-7 rounded-full object-cover" />
-                      : getInitials(user?.name)
-                    }
-                  </div>
+                  <Avatar src={user?.avatar} name={user?.name} size="xs" />
                   <span className="hidden sm:block text-sm font-medium text-slate-700 max-w-[120px] truncate">
                     {user?.name}
                   </span>

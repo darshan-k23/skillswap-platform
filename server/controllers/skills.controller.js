@@ -1,6 +1,7 @@
 // controllers/skills.controller.js
 // Handles CRUD for Skill documents
 const Skill = require('../models/Skill');
+const { attachSkillAvatar } = require('../services/s3.service');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // @desc    Get all skills (optionally filtered)
@@ -28,7 +29,9 @@ const getAllSkills = async (req, res, next) => {
       );
     }
 
-    res.status(200).json({ success: true, count: skills.length, skills });
+    const skillsWithAvatars = await Promise.all(skills.map(attachSkillAvatar));
+
+    res.status(200).json({ success: true, count: skillsWithAvatars.length, skills: skillsWithAvatars });
   } catch (error) {
     next(error);
   }
@@ -57,8 +60,9 @@ const createSkill = async (req, res, next) => {
 
     // Populate user info for response
     await skill.populate('userId', 'name email college year avatar');
+    const skillObj = await attachSkillAvatar(skill);
 
-    res.status(201).json({ success: true, skill });
+    res.status(201).json({ success: true, skill: skillObj });
   } catch (error) {
     next(error);
   }
@@ -93,7 +97,9 @@ const updateSkill = async (req, res, next) => {
       { new: true, runValidators: true }
     ).populate('userId', 'name email college year avatar');
 
-    res.status(200).json({ success: true, skill: updatedSkill });
+    const skillObj = await attachSkillAvatar(updatedSkill);
+
+    res.status(200).json({ success: true, skill: skillObj });
   } catch (error) {
     next(error);
   }

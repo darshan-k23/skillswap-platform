@@ -3,6 +3,7 @@
 const Request = require('../models/Request');
 const User = require('../models/User');
 const Skill = require('../models/Skill');
+const { attachRequestAvatars } = require('../services/s3.service');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // @desc    Get all requests involving the logged-in user
@@ -31,7 +32,9 @@ const getRequests = async (req, res, next) => {
       .populate('wantedSkillId', 'name type category description')
       .sort({ createdAt: -1 });
 
-    res.status(200).json({ success: true, count: requests.length, requests });
+    const requestsWithAvatars = await Promise.all(requests.map(attachRequestAvatars));
+
+    res.status(200).json({ success: true, count: requestsWithAvatars.length, requests: requestsWithAvatars });
   } catch (error) {
     next(error);
   }
@@ -102,7 +105,9 @@ const createRequest = async (req, res, next) => {
       { path: 'wantedSkillId', select: 'name type category description' },
     ]);
 
-    res.status(201).json({ success: true, request });
+    const requestObj = await attachRequestAvatars(request);
+
+    res.status(201).json({ success: true, request: requestObj });
   } catch (error) {
     next(error);
   }
@@ -145,7 +150,9 @@ const updateRequest = async (req, res, next) => {
       { path: 'wantedSkillId', select: 'name type category description' },
     ]);
 
-    res.status(200).json({ success: true, request });
+    const requestObj = await attachRequestAvatars(request);
+
+    res.status(200).json({ success: true, request: requestObj });
   } catch (error) {
     next(error);
   }
