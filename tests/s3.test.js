@@ -535,5 +535,3 @@ test('Existing avatars remain intact if replacement fails', async () => {
     setS3Client(null);
   }
 });
-
-
