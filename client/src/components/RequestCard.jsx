@@ -2,6 +2,7 @@
 // Displays a single exchange request with accept/decline actions
 import React from 'react'
 import { useAuth } from '../context/AuthContext'
+import Avatar from './Avatar'
 
 const statusConfig = {
   pending:  { label: 'Pending',  cls: 'badge-pending',  icon: '⏳' },
@@ -38,12 +39,7 @@ const RequestCard = ({ request, onAccept, onDecline, onDelete }) => {
       <div className="flex items-start justify-between gap-3 mb-4">
         <div className="flex items-center gap-3">
           {/* Other person's avatar */}
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-accent-500 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-            {otherPerson?.avatar
-              ? <img src={otherPerson.avatar} alt={otherPerson.name} className="w-10 h-10 rounded-full object-cover" />
-              : getInitials(otherPerson?.name || '?')
-            }
-          </div>
+          <Avatar src={otherPerson?.avatar} name={otherPerson?.name || '?'} size="sm" />
           <div>
             <p className="text-sm font-semibold text-slate-800">{otherPerson?.name || 'Unknown'}</p>
             <p className="text-xs text-slate-500">

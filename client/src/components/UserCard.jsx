@@ -2,6 +2,7 @@
 // Displays a user summary card with their skills — used on Browse page
 import React from 'react'
 import { Link } from 'react-router-dom'
+import Avatar from './Avatar'
 
 const UserCard = ({ user, onSendRequest }) => {
   const offerSkills = (user.skills || []).filter((s) => s.type === 'offer')
@@ -16,12 +17,7 @@ const UserCard = ({ user, onSendRequest }) => {
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           {/* Avatar */}
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-400 to-accent-500 flex items-center justify-center text-white font-bold text-base flex-shrink-0 shadow-sm">
-            {user.avatar
-              ? <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full object-cover" />
-              : getInitials(user.name)
-            }
-          </div>
+          <Avatar src={user.avatar} name={user.name} size="md" />
           <div className="min-w-0">
             <h3 className="font-semibold text-slate-900 text-base truncate">{user.name}</h3>
             <div className="flex items-center gap-2 flex-wrap mt-0.5">

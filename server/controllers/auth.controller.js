@@ -3,6 +3,7 @@
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const User = require('../models/User');
+const { resolveAvatarUrl, attachAvatarUrl } = require('../services/s3.service');
 
 // ── Helper: generate JWT ─────────────────────────────────────────────────────
 const generateToken = (id) => {
@@ -36,6 +37,7 @@ const register = async (req, res, next) => {
     const user = await User.create({ name, email, password, bio, college, year });
 
     const token = generateToken(user._id);
+    const resolvedAvatar = await resolveAvatarUrl(user.avatar);
 
     res.status(201).json({
       success: true,
@@ -47,7 +49,7 @@ const register = async (req, res, next) => {
         bio: user.bio,
         college: user.college,
         year: user.year,
-        avatar: user.avatar,
+        avatar: resolvedAvatar,
         createdAt: user.createdAt,
       },
     });
@@ -83,6 +85,7 @@ const login = async (req, res, next) => {
     }
 
     const token = generateToken(user._id);
+    const resolvedAvatar = await resolveAvatarUrl(user.avatar);
 
     res.status(200).json({
       success: true,
@@ -94,7 +97,7 @@ const login = async (req, res, next) => {
         bio: user.bio,
         college: user.college,
         year: user.year,
-        avatar: user.avatar,
+        avatar: resolvedAvatar,
         createdAt: user.createdAt,
       },
     });
@@ -112,10 +115,11 @@ const getMe = async (req, res, next) => {
   try {
     // req.user is attached by auth.middleware.js
     const user = await User.findById(req.user._id).populate('skills');
+    const userObj = await attachAvatarUrl(user);
 
     res.status(200).json({
       success: true,
-      user,
+      user: userObj,
     });
   } catch (error) {
     next(error);
