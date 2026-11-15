@@ -5,6 +5,21 @@
 
 const YEARS = ['FE', 'SE', 'TE', 'BE'];
 const SKILL_TYPES = ['offer', 'want'];
+const REQUEST_STATUSES = ['pending', 'accepted', 'declined'];
+const REQUEST_DIRECTIONS = ['sent', 'received'];
+const SKILL_CATEGORIES = [
+  'Programming',
+  'Design',
+  'Music',
+  'Sports',
+  'Language',
+  'Math',
+  'Science',
+  'Art',
+  'Writing',
+  'General',
+  'Other',
+];
 
 // Checks the basic shape of a college email id.
 function isValidEmail(email) {
@@ -22,6 +37,26 @@ function isValidSkillType(type) {
   return SKILL_TYPES.includes(type);
 }
 
+// A Skill category must belong to the approved category list.
+function isValidSkillCategory(category) {
+  return typeof category === 'string' && SKILL_CATEGORIES.includes(category.trim());
+}
+
+// Validates whether a value is a valid 24-character hexadecimal MongoDB ObjectId string.
+function isValidObjectId(id) {
+  return typeof id === 'string' && /^[0-9a-fA-F]{24}$/.test(id);
+}
+
+// Request status must be pending, accepted, or declined.
+function isValidRequestStatus(status) {
+  return typeof status === 'string' && REQUEST_STATUSES.includes(status);
+}
+
+// Request direction must be sent or received.
+function isValidRequestDirection(direction) {
+  return typeof direction === 'string' && REQUEST_DIRECTIONS.includes(direction);
+}
+
 // Mirrors the minimum password length enforced in the User schema.
 function isStrongEnoughPassword(password) {
   return typeof password === 'string' && password.length >= 6;
@@ -36,9 +71,16 @@ function canSendRequest(senderId, receiverId) {
 module.exports = {
   YEARS,
   SKILL_TYPES,
+  SKILL_CATEGORIES,
+  REQUEST_STATUSES,
+  REQUEST_DIRECTIONS,
   isValidEmail,
   isValidYear,
   isValidSkillType,
+  isValidSkillCategory,
+  isValidObjectId,
+  isValidRequestStatus,
+  isValidRequestDirection,
   isStrongEnoughPassword,
   canSendRequest
 };

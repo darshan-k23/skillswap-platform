@@ -86,13 +86,12 @@ const updateUser = async (req, res, next) => {
     }
 
     // Fields allowed to update (no password change here, no email reassignment)
-    const { name, bio, college, year, avatar } = req.body;
+    const { name, bio, college, year } = req.body;
     const updateFields = {};
     if (name !== undefined) updateFields.name = name;
     if (bio !== undefined) updateFields.bio = bio;
     if (college !== undefined) updateFields.college = college;
     if (year !== undefined) updateFields.year = year;
-    if (avatar !== undefined) updateFields.avatar = avatar;
 
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
